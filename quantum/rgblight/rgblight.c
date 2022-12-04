@@ -678,7 +678,7 @@ void rgblight_sethsv_at(uint8_t hue, uint8_t sat, uint8_t val, uint8_t index) {
     rgblight_setrgb_at(tmp_led.r, tmp_led.g, tmp_led.b, index);
 }
 
-#if defined(RGBLIGHT_EFFECT_BREATHING) || defined(RGBLIGHT_EFFECT_RAINBOW_MOOD) || defined(RGBLIGHT_EFFECT_RAINBOW_SWIRL) || defined(RGBLIGHT_EFFECT_SNAKE) || defined(RGBLIGHT_EFFECT_KNIGHT) || defined(RGBLIGHT_EFFECT_TWINKLE)
+#if defined(RGBLIGHT_EFFECT_BREATHING) || defined(RGBLIGHT_EFFECT_RAINBOW_MOOD) || defined(RGBLIGHT_EFFECT_RAINBOW_SWIRL) || defined(RGBLIGHT_EFFECT_SNAKE) || defined(RGBLIGHT_EFFECT_KNIGHT) || defined(RGBLIGHT_EFFECT_TWINKLE) || defined(RGBLIGHT_EFFECT_CUSTOMTEST)
 
 static uint8_t get_interval_time(const uint8_t *default_interval_address, uint8_t velocikey_min, uint8_t velocikey_max) {
     return
@@ -1093,6 +1093,7 @@ void rgblight_task(void) {
             effect_func   = rgblight_effect_knight;
         }
 #    endif
+
 #    ifdef RGBLIGHT_EFFECT_CHRISTMAS
         else if (rgblight_status.base_mode == RGBLIGHT_MODE_CHRISTMAS) {
             // christmas mode
@@ -1119,6 +1120,17 @@ void rgblight_task(void) {
             effect_func   = (effect_func_t)rgblight_effect_twinkle;
         }
 #    endif
+
+//Custom Animation Test
+
+#   ifdef RGBLIGHT_EFFECT_CUSTOMTEST
+        else if(rgblight_status.base_mode == RGBLIGHT_MODE_CUSTOMTEST) {
+            interval_time = RGBLIGHT_EFFECT_CUSTOMTEST_INTERVAL;
+            effect_func = (effect_func_t)rgblight_effect_customtest;
+        }
+#   endif
+
+
         if (animation_status.restart) {
             animation_status.restart    = false;
             animation_status.last_timer = sync_timer_read();
@@ -1495,6 +1507,29 @@ void rgblight_effect_twinkle(animation_status_t *anim) {
         sethsv(c->h, c->s, c->v, ledp);
     }
 
+    rgblight_set();
+}
+#endif
+
+#ifdef RGBLIGHT_EFFECT_CUSTOMTEST
+void rgblight_effect_customtest(animation_status_t *anim) {
+    uint8_t custom_hue = 32;
+    uint8_t custom_sat = 255;
+    uint8_t custom_val = rgblight_config.val;
+    uint8_t custom_opposite_hue = (custom_hue + 128) % 255;
+    //uint8_t custom_opposite_hue = 160;
+
+    for (uint8_t i = 0; i < rgblight_ranges.effect_num_leds; i++) {
+        if (i % 3 == 1) {
+            sethsv(custom_hue, custom_sat, custom_val, (LED_TYPE*)&led[i + rgblight_ranges.effect_start_pos]);
+        }
+        else if (i % 3 == 2) {
+            sethsv(custom_opposite_hue, custom_sat, custom_val, (LED_TYPE*)&led[i + rgblight_ranges.effect_start_pos]);
+        }
+        else {
+            sethsv(0, 0, 0, (LED_TYPE*)&led[i + rgblight_ranges.effect_start_pos]);
+        }
+    }
     rgblight_set();
 }
 #endif

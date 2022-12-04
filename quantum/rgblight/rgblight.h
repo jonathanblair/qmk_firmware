@@ -96,7 +96,8 @@
   || defined(RGBLIGHT_EFFECT_CHRISTMAS)     \
   || defined(RGBLIGHT_EFFECT_RGB_TEST)      \
   || defined(RGBLIGHT_EFFECT_ALTERNATING)   \
-  || defined(RGBLIGHT_EFFECT_TWINKLE)
+  || defined(RGBLIGHT_EFFECT_TWINKLE)       \
+  || defined(RGBLIGHT_EFFECT_CUSTOMTEST)
 #    define RGBLIGHT_USE_TIMER
 #endif
 
@@ -160,6 +161,11 @@ enum RGBLIGHT_EFFECT_MODE {
 
 #ifndef RGBLIGHT_EFFECT_TWINKLE_PROBABILITY
 #    define RGBLIGHT_EFFECT_TWINKLE_PROBABILITY 1 / 127
+#endif
+
+//Custom Test Animation
+#ifndef RGBLIGHT_EFFECT_CUSTOMTEST_INTERVAL
+#   define RGBLIGHT_EFFECT_CUSTOMTEST_INTERVAL 500
 #endif
 
 #ifndef RGBLIGHT_HUE_STEP
@@ -456,5 +462,6 @@ void rgblight_effect_christmas(animation_status_t *anim);
 void rgblight_effect_rgbtest(animation_status_t *anim);
 void rgblight_effect_alternating(animation_status_t *anim);
 void rgblight_effect_twinkle(animation_status_t *anim);
+void rgblight_effect_customtest(animation_status_t* anim);
 
 #endif
